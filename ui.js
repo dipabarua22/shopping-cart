@@ -5,6 +5,13 @@ const cartCount = document.getElementById("cartCount");
 const cartTotal = document.getElementById("cartTotal");
 const searchBox = document.getElementById("searchBox");
 const categoryFilter = document.getElementById("categoryFilter");
+const promoCodeInput = document.getElementById("promoCode");
+const applyPromoBtn = document.getElementById("applyPromo");
+const promoMessage = document.getElementById("promoMessage");
+
+let discount = 0;
+let promoApplied = false;
+
 
 // Render products
 function renderProducts(list) {
@@ -37,7 +44,6 @@ function renderCategories() {
   });
 }
 
-// Update Cart UI
 function updateCartUI() {
   cartItems.innerHTML = "";
   cart.forEach(item => {
@@ -55,8 +61,15 @@ function updateCartUI() {
   });
 
   cartCount.textContent = cart.length;
-  cartTotal.textContent = calculateTotal();
+
+  let total = calculateTotal();
+  if (discount > 0) {
+    total = total - (total * discount);
+  }
+
+  cartTotal.textContent = total.toFixed(2);
 }
+
 
 // Search
 searchBox.addEventListener("input", () => {
@@ -70,6 +83,33 @@ categoryFilter.addEventListener("change", () => {
   const category = categoryFilter.value;
   const filtered = category === "all" ? products : products.filter(p => p.category === category);
   renderProducts(filtered);
+});
+applyPromoBtn.addEventListener("click", () => {
+  const code = promoCodeInput.value.trim().toLowerCase();
+
+  if (promoApplied) {
+    promoMessage.textContent = "Promo code already applied!";
+    promoMessage.className = "text-red-500 text-sm mt-2";
+    return;
+  }
+
+  if (code === "ostad10") {
+    discount = 0.10;
+    promoApplied = true;
+    promoMessage.textContent = "Promo applied: 10% off!";
+    promoMessage.className = "text-green-500 text-sm mt-2";
+  } else if (code === "ostad50") {
+    discount = 0.50;
+    promoApplied = true;
+    promoMessage.textContent = "Promo applied: 50% off!";
+    promoMessage.className = "text-green-500 text-sm mt-2";
+  } else {
+    promoMessage.textContent = "Invalid Promo Code";
+    promoMessage.className = "text-red-500 text-sm mt-2";
+    return;
+  }
+
+  updateCartUI(); // from cart.js
 });
 
 // Cart Modal toggle

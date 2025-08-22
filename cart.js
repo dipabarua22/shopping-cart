@@ -34,7 +34,9 @@ function clearCart() {
   updateCartUI();
 }
 
-// Calculate total
+// Calculate total with discount
 function calculateTotal() {
-  return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  total = total - (total * discount); // apply discount (discount comes from ui.js)
+  return total;
 }
